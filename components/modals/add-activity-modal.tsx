@@ -1,31 +1,13 @@
 // components/modals/add-activity-modal.tsx
-"use client";
+'use client';
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,16 +16,8 @@ import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/client";
 import { createActivity } from "./actions";
 
-// Define types for our fetched data
-type Category = {
-  category_id: string;
-  name: string;
-};
-
-type Faculty = {
-  id: string;
-  full_name: string | null;
-};
+type Category = { category_id: string; name: string; };
+type Faculty = { id: string; full_name: string | null; };
 
 export function AddActivityModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,9 +44,9 @@ export function AddActivityModal() {
     if (startDate) formData.append('start_date', startDate.toISOString());
     if (endDate) formData.append('end_date', endDate.toISOString());
     const result = await createActivity(formData);
-    if (result.error) {
+    if (result?.error) {
       alert(result.error);
-    } else {
+    } else if (result?.success) {
       alert(result.success);
       setIsOpen(false);
     }
@@ -81,15 +55,10 @@ export function AddActivityModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        {/* --- THIS IS THE UPDATED BUTTON WITH THE HOVER EFFECT --- */}
-        <Button className="group bg-green-500 hover:bg-green-600 rounded-full h-16 w-16 hover:w-48 transition-all duration-300 ease-in-out flex items-center justify-center shadow-lg">
-          <Plus className="h-8 w-8 transition-transform duration-300 group-hover:rotate-90" />
-          <span className="w-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-auto group-hover:ml-2">
-            Add Activity
-          </span>
+        <Button className="bg-green-500 hover:bg-green-600 rounded-full h-16 w-16 shadow-lg">
+          <Plus className="h-8 w-8" />
         </Button>
       </DialogTrigger>
-      
       <DialogContent className="sm:max-w-[625px]">
         <form action={handleFormAction}>
           <DialogHeader>
