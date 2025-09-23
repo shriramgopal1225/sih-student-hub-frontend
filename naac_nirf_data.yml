@@ -1,0 +1,114 @@
+# NAAC (National Assessment and Accreditation Council) and NIRF (National Institutional Ranking Framework) Data Structure
+# This file defines the data structure for generating NAAC and NIRF reports
+
+naac_metrics:
+  teaching_learning_resources:
+    faculty_student_ratio: 
+      description: "Faculty to student ratio"
+      data_source: "faculty_count / student_count"
+    faculty_qualifications:
+      phd_faculty_percentage:
+        description: "Percentage of faculty with PhD"
+        data_source: "faculty table - qualification field"
+      experience_metrics:
+        description: "Average years of experience"
+        data_source: "faculty table - experience field"
+    
+  research_innovations:
+    publications:
+      description: "Research publications by faculty and students"
+      data_source: "research_publications table"
+    patents:
+      description: "Patents filed and granted"
+      data_source: "patents table"
+    research_projects:
+      description: "Ongoing and completed research projects"
+      data_source: "research_projects table"
+    
+  outreach_extension:
+    community_service:
+      description: "Community service activities"
+      data_source: "activities table - category: community_service"
+    industry_collaboration:
+      description: "Industry partnerships and collaborations"
+      data_source: "industry_partnerships table"
+    
+  governance_leadership:
+    institutional_policies:
+      description: "Institutional policies and procedures"
+      data_source: "institutional_policies table"
+    financial_management:
+      description: "Financial resources and utilization"
+      data_source: "financial_data table"
+
+nirf_metrics:
+  teaching_learning_resources:
+    faculty_student_ratio:
+      weightage: 30
+      data_source: "faculty_count / student_count"
+    faculty_with_phd:
+      weightage: 20
+      data_source: "faculty table - phd_count / total_faculty"
+    
+  research_professional_practice:
+    publications:
+      weightage: 25
+      data_source: "research_publications table"
+    patents:
+      weightage: 15
+      data_source: "patents table"
+    
+  graduation_outcomes:
+    placement_rate:
+      weightage: 30
+      data_source: "placements table"
+    higher_studies:
+      weightage: 20
+      data_source: "higher_studies table"
+    
+  outreach_inclusivity:
+    diversity_metrics:
+      weightage: 25
+      data_source: "students table - demographic data"
+    regional_diversity:
+      weightage: 20
+      data_source: "students table - location data"
+    
+  perception:
+    employer_feedback:
+      weightage: 40
+      data_source: "employer_feedback table"
+    student_feedback:
+      weightage: 30
+      data_source: "student_feedback table"
+
+# Database tables needed for NAAC/NIRF reporting
+required_tables:
+  - research_publications
+  - patents
+  - research_projects
+  - industry_partnerships
+  - institutional_policies
+  - financial_data
+  - placements
+  - higher_studies
+  - employer_feedback
+  - student_feedback
+  
+# Additional fields needed in existing tables
+table_extensions:
+  faculty:
+    - qualification (enum: PhD, Masters, Bachelors)
+    - experience_years (integer)
+    - research_area (text)
+    - publications_count (integer)
+  
+  students:
+    - category (enum: General, OBC, SC, ST, Other)
+    - state_of_origin (text)
+    - placement_status (enum: Placed, Higher_Studies, Entrepreneur, Seeking)
+    
+  activities:
+    - impact_score (decimal)
+    - beneficiaries_count (integer)
+    - naac_category (enum: Teaching, Research, Extension, Professional)
