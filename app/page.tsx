@@ -15,9 +15,13 @@ export default async function HomePage() {
       .eq("id", user.id)
       .single();
 
-    // Add the 'admin' role to the redirect logic
+    // Add the 'admin', 'superadmin', and 'hod' roles to the redirect logic
     if (profile?.role === "admin") {
       redirect("/admin/dashboard");
+    } else if (profile?.role === "superadmin") {
+      redirect("/superadmin/dashboard");
+    } else if (profile?.role === "hod") {
+      redirect("/hod/dashboard");
     } else if (profile?.role === "faculty") {
       redirect("/faculty/dashboard");
     } else if (profile?.role === "student") {

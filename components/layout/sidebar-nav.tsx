@@ -27,12 +27,31 @@ export function SidebarNav({ role }: { role: string | null | undefined }) {
     { href: "/admin/user-management", label: "User Management", icon: Users },
   ];
 
+  // --- NEW: Superadmin Links ---
+  const superadminLinks = [
+    { href: "/superadmin/dashboard", label: "Dashboard", icon: Home },
+    { href: "/superadmin/user-management", label: "User Management", icon: Users },
+    { href: "/superadmin/reports", label: "NAAC/NIRF Reports", icon: FileText },
+    { href: "/superadmin/analytics", label: "Analytics", icon: CheckSquare },
+  ];
+
+  // --- NEW: HOD Links ---
+  const hodLinks = [
+    { href: "/hod/dashboard", label: "Dashboard", icon: Home },
+    { href: "/hod/department", label: "Department Management", icon: Users },
+    { href: "/hod/reports", label: "Department Reports", icon: FileText },
+  ];
+
   // Logic to determine which links to show
   let navLinks = studentLinks; // Default to student
   if (role === "faculty") {
     navLinks = facultyLinks;
   } else if (role === "admin") {
     navLinks = adminLinks;
+  } else if (role === "superadmin") {
+    navLinks = superadminLinks;
+  } else if (role === "hod") {
+    navLinks = hodLinks;
   }
 
   return (
