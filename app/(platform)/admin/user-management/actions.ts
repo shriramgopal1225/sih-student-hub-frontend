@@ -209,3 +209,93 @@ export async function bulkCreateUsers(
     return { error: errorMessage };
   }
 }
+
+export async function updateUser(formData: FormData) {
+  const userId = formData.get('userId') as string;
+  const role = formData.get('role') as 'student' | 'faculty';
+  const email = formData.get('email') as string;
+  const fullName = formData.get('fullName') as string;
+  const profilePhotoFile = formData.get('profilePhoto') as File;
+
+  let publicURL = null;
+
+  try {
+    // 1. If a new photo was provided, upload it to storage
+    if (profilePhotoFile && profilePhotoFile.size > 0) {
+      const fileExtension = profilePhotoFile.name.split('.').pop();
+      const filePath = `profile-photos/${userId}/${Date.now()}.${fileExtension}`;
+      
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from('user_assets')
+        .upload(filePath, profilePhotoFile);
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL of the uploaded file
+      const { data: urlData } = supabaseAdmin.storage.from('user_assets').getPublicUrl(filePath);
+      publicURL = urlData.publicUrl;
+    }
+
+    // 2. Update the user's record in the 'profiles' table
+    const profileUpdateData: {
+      id: string;
+      full_name: string;
+      email: string;
+      profile_photo_url?: string;
+    } = {
+      id: userId,
+      full_name: fullName,
+      email: email,
+    };
+
+    // Only update photo URL if a new photo was uploaded
+    if (publicURL) {
+      profileUpdateData.profile_photo_url = publicURL;
+    }
+
+    const { error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .update(profileUpdateData)
+      .eq('id', userId);
+
+    if (profileError) throw profileError;
+
+    // 3. Update the role-specific record (student or faculty)
+    if (role === 'student') {
+      const course = formData.get('course') as string;
+      const year = formData.get('year') as string;
+      const gpa = formData.get('gpa') as string;
+      const cgpa = formData.get('cgpa') as string;
+      
+      const { error } = await supabaseAdmin.from('students').update({ 
+        course, 
+        year: parseInt(year), 
+        gpa: parseFloat(gpa) || null, 
+        cgpa: parseFloat(cgpa) || null 
+      }).eq('id', userId);
+      
+      if (error) throw error;
+    } else if (role === 'faculty') {
+      const department = formData.get('department') as string;
+      const designation = formData.get('designation') as string;
+      
+      const { error } = await supabaseAdmin.from('faculty').update({ 
+        department, 
+        designation 
+      }).eq('id', userId);
+      
+      if (error) throw error;
+    }
+
+    revalidatePath('/admin/user-management');
+    return { success: 'User profile updated successfully!' };
+
+  } catch (error: unknown) {
+    console.error("--- UPDATE USER FAILED ---", error);
+    let errorMessage = 'An unexpected server error occurred.';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { error: errorMessage };
+  }
+}

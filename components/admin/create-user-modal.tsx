@@ -13,8 +13,6 @@ import { createClient } from '@/lib/supabase/client';
 export function CreateUserModal({ role }: { role: 'student' | 'faculty' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [departments, setDepartments] = useState<string[]>([]);
-  
-  const courses = ["Computer Science and Engineering", "Electronics and Communication Engineering", "Mechanical Engineering", "Civil Engineering", "Information Technology"];
 
   useEffect(() => {
     const supabase = createClient();

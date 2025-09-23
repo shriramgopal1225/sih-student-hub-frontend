@@ -29,15 +29,15 @@ export function ActivityHeatmap({ data }: { data: HeatmapData[] }) {
           return `color-scale-${intensity}`;
         }}
         // This is the most reliable way to add tooltips without errors
-        transformDayElement={(element, value, index) => {
-          if (value) {
-            return React.cloneElement(element, {
-              'data-tooltip-id': 'heatmap-tooltip',
-              'data-tooltip-content': `${value.count} activities on ${value.date}`,
-            });
-          }
-          return element;
-        }}
+        // transformDayElement={(element, value) => {
+        //   if (value) {
+        //     return React.cloneElement(element as React.ReactElement, {
+        //       'data-tooltip-id': 'heatmap-tooltip',
+        //       'data-tooltip-content': `${value.count} activities on ${value.date}`,
+        //     });
+        //   }
+        //   return element as React.ReactElement;
+        // }}
       />
       {/* This component provides the actual tooltip pop-up */}
       <ReactTooltip id="heatmap-tooltip" />
