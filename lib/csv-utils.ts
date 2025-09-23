@@ -22,32 +22,15 @@ export type FacultyCSVRow = {
 // Generate CSV template for students
 export function generateStudentCSVTemplate(): string {
   const headers = ['full_name', 'email', 'password', 'enrollment_no', 'course', 'year', 'gpa', 'cgpa'];
-  const sampleRow = [
-    'John Doe',
-    'john.doe@example.com',
-    'tempPassword123',
-    'CS2024001',
-    'Computer Science and Engineering',
-    '2',
-    '8.5',
-    '8.2'
-  ];
   
-  return [headers.join(','), sampleRow.join(',')].join('\n');
+  return headers.join(',');
 }
 
 // Generate CSV template for faculty
 export function generateFacultyCSVTemplate(): string {
   const headers = ['full_name', 'email', 'password', 'department', 'designation'];
-  const sampleRow = [
-    'Dr. Jane Smith',
-    'jane.smith@example.com',
-    'tempPassword123',
-    'Computer Science and Engineering',
-    'Professor'
-  ];
   
-  return [headers.join(','), sampleRow.join(',')].join('\n');
+  return headers.join(',');
 }
 
 // Download CSV template file
