@@ -47,8 +47,6 @@ type EditUserModalProps = {
 export function EditUserModal({ user, role }: EditUserModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [departments, setDepartments] = useState<string[]>([]);
-  
-  const courses = ["Computer Science and Engineering", "Electronics and Communication Engineering", "Mechanical Engineering", "Civil Engineering", "Information Technology"];
 
   useEffect(() => {
     const supabase = createClient();
@@ -128,8 +126,8 @@ export function EditUserModal({ user, role }: EditUserModalProps) {
                       <SelectValue placeholder="Select a course" />
                     </SelectTrigger>
                     <SelectContent>
-                      {courses.map(c => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      {departments.map(d => (
+                        <SelectItem key={d} value={d}>{d}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
