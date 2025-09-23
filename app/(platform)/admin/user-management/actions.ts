@@ -125,7 +125,7 @@ export async function bulkCreateUsers(
           full_name: user.full_name,
           email: user.email,
           role: role,
-          profile_photo_url: null,
+          profile_photo_url: user.profile_image_url || null,
         });
 
         if (profileError) throw profileError;
