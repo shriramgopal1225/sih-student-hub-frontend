@@ -8,12 +8,12 @@ export default async function UserManagementPage() {
   // Fetch all students with their profile info
   const { data: students } = await supabase
     .from('students')
-    .select(`*, profiles(full_name, email)`);
+    .select(`*, profiles(id, full_name, email, profile_photo_url)`);
 
   // Fetch all faculty with their profile info
   const { data: faculty } = await supabase
     .from('faculty')
-    .select(`*, profiles(full_name, email)`);
+    .select(`*, profiles(id, full_name, email, profile_photo_url)`);
 
   return (
     <div className="space-y-6">
