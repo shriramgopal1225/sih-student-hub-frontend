@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CreateUserModal } from './create-user-modal';
+import { BulkUploadModal } from './bulk-upload-modal';
 
 type Student = { id: string; course: string; year: number; profiles: { full_name: string; email: string; } | null; };
 type Faculty = { id: string; department: string; designation: string; profiles: { full_name: string; email: string; } | null; };
@@ -20,7 +21,10 @@ export function UserManagementTabs({ students, faculty }: { students: Student[],
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div><CardTitle>Students</CardTitle><CardDescription>A list of all student accounts.</CardDescription></div>
-            <CreateUserModal role="student" />
+            <div className="flex gap-2">
+              <BulkUploadModal role="student" />
+              <CreateUserModal role="student" />
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -43,7 +47,10 @@ export function UserManagementTabs({ students, faculty }: { students: Student[],
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div><CardTitle>Faculty</CardTitle><CardDescription>A list of all faculty accounts.</CardDescription></div>
-            <CreateUserModal role="faculty" />
+            <div className="flex gap-2">
+              <BulkUploadModal role="faculty" />
+              <CreateUserModal role="faculty" />
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
