@@ -29,11 +29,11 @@ export function AddActivityModal() {
   useEffect(() => {
     const supabase = createClient();
     const fetchCategories = async () => {
-      const { data, error } = await supabase.from("activity_categories").select("*");
+      const { data } = await supabase.from("activity_categories").select("*");
       if (data) setCategories(data);
     };
     const fetchFaculty = async () => {
-      const { data, error } = await supabase.from("profiles").select("id, full_name").eq("role", "faculty");
+      const { data } = await supabase.from("profiles").select("id, full_name").eq("role", "faculty");
       if (data) setFaculty(data);
     };
     fetchCategories();
@@ -63,60 +63,17 @@ export function AddActivityModal() {
         <form action={handleFormAction}>
           <DialogHeader>
             <DialogTitle>Add a New Activity</DialogTitle>
-            <DialogDescription>
-              Submit your activity for faculty verification. All fields are required.
-            </DialogDescription>
+            <DialogDescription>Submit your activity for faculty verification. All fields are required.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">Activity Title</Label>
-              <Input id="title" name="title" className="col-span-3" required />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">Category</Label>
-              <Select name="category" required>
-                <SelectTrigger className="col-span-3"><SelectValue placeholder="Select a category" /></SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.category_id} value={category.category_id}>{category.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Dates</Label>
-              <div className="col-span-3 grid grid-cols-2 gap-2">
-                <Popover>
-                  <PopoverTrigger asChild><Button variant={"outline"} className={cn("justify-start font-normal", !startDate && "text-muted-foreground")}> <CalendarIcon className="mr-2 h-4 w-4" />{startDate ? format(startDate, "PPP") : <span>Start date</span>}</Button></PopoverTrigger>
-                  <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus /></PopoverContent>
-                </Popover>
-                <Popover>
-                  <PopoverTrigger asChild><Button variant={"outline"} className={cn("justify-start font-normal", !endDate && "text-muted-foreground")}> <CalendarIcon className="mr-2 h-4 w-4" />{endDate ? format(endDate, "PPP") : <span>End date</span>}</Button></PopoverTrigger>
-                  <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={endDate} onSelect={setEndDate} /></PopoverContent>
-                </Popover>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="faculty" className="text-right">Verifying Faculty</Label>
-              <Select name="faculty" required>
-                <SelectTrigger className="col-span-3"><SelectValue placeholder="Choose faculty member" /></SelectTrigger>
-                <SelectContent>
-                  {faculty.map((prof) => (<SelectItem key={prof.id} value={prof.id}>{prof.full_name}</SelectItem>))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="proof" className="text-right">Proof</Label>
-              <Input id="proof" name="proof" type="file" className="col-span-3" required />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-               <Label htmlFor="description" className="text-right">Description</Label>
-               <Textarea id="description" name="description" placeholder="Describe your activity and key learnings." className="col-span-3" />
-            </div>
+            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="title" className="text-right">Activity Title</Label><Input id="title" name="title" className="col-span-3" required /></div>
+            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="category" className="text-right">Category</Label><Select name="category" required><SelectTrigger className="col-span-3"><SelectValue placeholder="Select a category" /></SelectTrigger><SelectContent>{categories.map((c) => (<SelectItem key={c.category_id} value={c.category_id}>{c.name}</SelectItem>))}</SelectContent></Select></div>
+            <div className="grid grid-cols-4 items-center gap-4"><Label className="text-right">Dates</Label><div className="col-span-3 grid grid-cols-2 gap-2"><Popover><PopoverTrigger asChild><Button variant={"outline"} className={cn("justify-start font-normal", !startDate && "text-muted-foreground")}> <CalendarIcon className="mr-2 h-4 w-4" />{startDate ? format(startDate, "PPP") : <span>Start date</span>}</Button></PopoverTrigger><PopoverContent className="w-auto p-0"><Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus /></PopoverContent></Popover><Popover><PopoverTrigger asChild><Button variant={"outline"} className={cn("justify-start font-normal", !endDate && "text-muted-foreground")}> <CalendarIcon className="mr-2 h-4 w-4" />{endDate ? format(endDate, "PPP") : <span>End date</span>}</Button></PopoverTrigger><PopoverContent className="w-auto p-0"><Calendar mode="single" selected={endDate} onSelect={setEndDate} /></PopoverContent></Popover></div></div>
+            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="faculty" className="text-right">Verifying Faculty</Label><Select name="faculty" required><SelectTrigger className="col-span-3"><SelectValue placeholder="Choose faculty member" /></SelectTrigger><SelectContent>{faculty.map((p) => (<SelectItem key={p.id} value={p.id}>{p.full_name}</SelectItem>))}</SelectContent></Select></div>
+            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="proof" className="text-right">Proof</Label><Input id="proof" name="proof" type="file" className="col-span-3" required /></div>
+            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="description" className="text-right">Description</Label><Textarea id="description" name="description" placeholder="Describe your activity and key learnings." className="col-span-3" /></div>
           </div>
-          <DialogFooter>
-            <Button type="submit" className="bg-green-500 hover:bg-green-600">Submit Activity</Button>
-          </DialogFooter>
+          <DialogFooter><Button type="submit" className="bg-green-500 hover:bg-green-600">Submit Activity</Button></DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

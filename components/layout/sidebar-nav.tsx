@@ -1,39 +1,52 @@
 // components/layout/sidebar-nav.tsx
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, FileText, CheckSquare } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, FileText, CheckSquare, Users } from "lucide-react"; // Add Users icon
+import { cn } from "@/lib/utils";
 
 export function SidebarNav({ role }: { role: string | null | undefined }) {
   const pathname = usePathname();
 
-  // Define links for different roles
   const studentLinks = [
-    { href: '/student/dashboard', label: 'Dashboard', icon: Home },
-    { href: '/student/activities', label: 'My Activities', icon: FileText },
+    { href: "/student/dashboard", label: "Dashboard", icon: Home },
+    { href: "/student/activities", label: "My Activities", icon: FileText },
   ];
-
   const facultyLinks = [
-    { href: '/faculty/dashboard', label: 'Dashboard', icon: Home },
-    { href: '/faculty/verification', label: 'Verification Queue', icon: CheckSquare },
+    { href: "/faculty/dashboard", label: "Dashboard", icon: Home },
+    {
+      href: "/faculty/verification",
+      label: "Verification Queue",
+      icon: CheckSquare,
+    },
+  ];
+  // --- NEW: Admin Links ---
+  const adminLinks = [
+    { href: "/admin/dashboard", label: "Dashboard", icon: Home },
+    { href: "/admin/user-management", label: "User Management", icon: Users },
   ];
 
-  const navLinks = role === 'faculty' ? facultyLinks : studentLinks; // Default to student links
+  // Logic to determine which links to show
+  let navLinks = studentLinks; // Default to student
+  if (role === "faculty") {
+    navLinks = facultyLinks;
+  } else if (role === "admin") {
+    navLinks = adminLinks;
+  }
 
   return (
     <nav className="grid items-start px-4 text-sm font-medium">
       {navLinks.map((link) => {
-        const isActive = pathname === link.href;
+        const isActive = pathname.startsWith(link.href);
         const Icon = link.icon;
         return (
           <Link
             key={link.label}
             href={link.href}
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900',
-              isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-500'
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900",
+              isActive ? "bg-gray-200 text-gray-900" : "text-gray-500"
             )}
           >
             <Icon className="h-4 w-4" />
