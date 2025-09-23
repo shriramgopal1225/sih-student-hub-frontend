@@ -28,6 +28,7 @@ type BulkUploadModalProps = {
 export function BulkUploadModal({ role }: BulkUploadModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [validData, setValidData] = useState<(StudentCSVRow | FacultyCSVRow)[]>([]);
   const [errors, setErrors] = useState<Array<{ row: number; errors: string[] }>>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -81,12 +82,13 @@ export function BulkUploadModal({ role }: BulkUploadModalProps) {
     setUploadResult(null);
 
     try {
-      const result = await bulkCreateUsers(validData, role);
+      const result = await bulkCreateUsers(validData, role, imageFiles);
       setUploadResult(result);
       
       if (result.success) {
         // Reset form on success
         setCsvFile(null);
+        setImageFiles([]);
         setValidData([]);
         setErrors([]);
         // Close modal after a short delay
@@ -103,6 +105,7 @@ export function BulkUploadModal({ role }: BulkUploadModalProps) {
 
   const resetModal = () => {
     setCsvFile(null);
+    setImageFiles([]);
     setValidData([]);
     setErrors([]);
     setUploadResult(null);
@@ -127,7 +130,7 @@ export function BulkUploadModal({ role }: BulkUploadModalProps) {
             Bulk Upload {role === 'student' ? 'Students' : 'Faculty'}
           </DialogTitle>
           <DialogDescription>
-            Upload a CSV file to create multiple {role} accounts at once.
+            Upload a CSV file to create multiple {role} accounts at once. Optionally include profile images.
           </DialogDescription>
         </DialogHeader>
 
@@ -161,6 +164,26 @@ export function BulkUploadModal({ role }: BulkUploadModalProps) {
               onChange={handleFileChange}
               disabled={isProcessing}
             />
+          </div>
+
+          {/* Profile Images Upload Section */}
+          <div className="space-y-2">
+            <Label>Step 3: Upload Profile Images (Optional)</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
+              disabled={isProcessing}
+            />
+            <div className="text-sm text-muted-foreground">
+              Select multiple image files. Image filenames should match email addresses (e.g., john.doe@example.com.jpg).
+              {imageFiles.length > 0 && (
+                <span className="block mt-1 font-medium">
+                  {imageFiles.length} image(s) selected
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Validation Results */}

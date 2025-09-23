@@ -9,7 +9,6 @@ export type StudentCSVRow = {
   year: number;
   gpa?: number;
   cgpa?: number;
-  profile_image_url?: string;
 };
 
 export type FacultyCSVRow = {
@@ -18,19 +17,18 @@ export type FacultyCSVRow = {
   password: string;
   department: string;
   designation: string;
-  profile_image_url?: string;
 };
 
 // Generate CSV template for students
 export function generateStudentCSVTemplate(): string {
-  const headers = ['full_name', 'email', 'password', 'enrollment_no', 'course', 'year', 'gpa', 'cgpa', 'profile_image_url'];
+  const headers = ['full_name', 'email', 'password', 'enrollment_no', 'course', 'year', 'gpa', 'cgpa'];
   
   return headers.join(',');
 }
 
 // Generate CSV template for faculty
 export function generateFacultyCSVTemplate(): string {
-  const headers = ['full_name', 'email', 'password', 'department', 'designation', 'profile_image_url'];
+  const headers = ['full_name', 'email', 'password', 'department', 'designation'];
   
   return headers.join(',');
 }
@@ -94,7 +92,7 @@ export function validateStudentCSVData(rows: string[][]): {
       continue;
     }
     
-    const [full_name, email, password, enrollment_no, course, yearStr, gpaStr, cgpaStr, profileImageUrl] = row;
+    const [full_name, email, password, enrollment_no, course, yearStr, gpaStr, cgpaStr] = row;
     
     // Validate required fields
     if (!full_name?.trim()) rowErrors.push('Full name is required');
@@ -118,7 +116,6 @@ export function validateStudentCSVData(rows: string[][]): {
     // Validate optional GPA/CGPA
     let gpa: number | undefined;
     let cgpa: number | undefined;
-    let profile_image_url: string | undefined;
     
     if (gpaStr?.trim()) {
       gpa = parseFloat(gpaStr);
@@ -134,17 +131,6 @@ export function validateStudentCSVData(rows: string[][]): {
       }
     }
     
-    // Validate optional profile image URL
-    if (profileImageUrl?.trim()) {
-      profile_image_url = profileImageUrl.trim();
-      // Basic URL validation
-      try {
-        new URL(profile_image_url);
-      } catch {
-        rowErrors.push('Profile image URL must be a valid URL');
-      }
-    }
-    
     if (rowErrors.length > 0) {
       errors.push({ row: i + 1, errors: rowErrors });
     } else {
@@ -156,8 +142,7 @@ export function validateStudentCSVData(rows: string[][]): {
         course: course.trim(),
         year,
         gpa,
-        cgpa,
-        profile_image_url
+        cgpa
       });
     }
   }
@@ -184,7 +169,7 @@ export function validateFacultyCSVData(rows: string[][]): {
       continue;
     }
     
-    const [full_name, email, password, department, designation, profileImageUrl] = row;
+    const [full_name, email, password, department, designation] = row;
     
     // Validate required fields
     if (!full_name?.trim()) rowErrors.push('Full name is required');
@@ -198,18 +183,6 @@ export function validateFacultyCSVData(rows: string[][]): {
       rowErrors.push('Invalid email format');
     }
     
-    // Validate optional profile image URL
-    let profile_image_url: string | undefined;
-    if (profileImageUrl?.trim()) {
-      profile_image_url = profileImageUrl.trim();
-      // Basic URL validation
-      try {
-        new URL(profile_image_url);
-      } catch {
-        rowErrors.push('Profile image URL must be a valid URL');
-      }
-    }
-    
     if (rowErrors.length > 0) {
       errors.push({ row: i + 1, errors: rowErrors });
     } else {
@@ -218,8 +191,7 @@ export function validateFacultyCSVData(rows: string[][]): {
         email: email.trim().toLowerCase(),
         password: password.trim(),
         department: department.trim(),
-        designation: designation.trim(),
-        profile_image_url
+        designation: designation.trim()
       });
     }
   }

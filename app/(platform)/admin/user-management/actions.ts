@@ -96,12 +96,21 @@ export async function createNewUser(formData: FormData) {
 
 export async function bulkCreateUsers(
   users: (StudentCSVRow | FacultyCSVRow)[],
-  role: 'student' | 'faculty'
+  role: 'student' | 'faculty',
+  imageFiles: File[] = []
 ) {
   const results = {
     successful: 0,
     failed: 0,
     errors: [] as string[]
+  };
+
+  // Helper function to find profile image for a user by email
+  const findProfileImage = (email: string): File | null => {
+    return imageFiles.find(file => {
+      const nameWithoutExt = file.name.split('.').slice(0, -1).join('.');
+      return nameWithoutExt.toLowerCase() === email.toLowerCase();
+    }) || null;
   };
 
   try {
@@ -119,18 +128,36 @@ export async function bulkCreateUsers(
         if (authError) throw authError;
         const userId = authData.user.id;
 
-        // 2. Create the profile record
+        // 2. Upload profile image if available
+        let profilePhotoUrl: string | null = null;
+        const profileImage = findProfileImage(user.email);
+        if (profileImage) {
+          const fileExtension = profileImage.name.split('.').pop();
+          const filePath = `profile-photos/${userId}/${Date.now()}.${fileExtension}`;
+          
+          const { error: uploadError } = await supabaseAdmin.storage
+            .from('user_assets')
+            .upload(filePath, profileImage);
+
+          if (!uploadError) {
+            const { data: urlData } = supabaseAdmin.storage.from('user_assets').getPublicUrl(filePath);
+            profilePhotoUrl = urlData.publicUrl;
+          }
+          // Note: We don't throw on upload error to avoid stopping the entire process
+        }
+
+        // 3. Create the profile record
         const { error: profileError } = await supabaseAdmin.from('profiles').upsert({
           id: userId,
           full_name: user.full_name,
           email: user.email,
           role: role,
-          profile_photo_url: user.profile_image_url || null,
+          profile_photo_url: profilePhotoUrl,
         });
 
         if (profileError) throw profileError;
 
-        // 3. Create the role-specific record
+        // 4. Create the role-specific record
         if (role === 'student') {
           const studentData = user as StudentCSVRow;
           const { error } = await supabaseAdmin.from('students').insert({
