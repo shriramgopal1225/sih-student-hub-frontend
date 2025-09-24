@@ -1,6 +1,6 @@
 // app/page.tsx
 import { redirect } from "next/navigation";
-import { createClient } from "../lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -15,14 +15,15 @@ export default async function HomePage() {
       .eq("id", user.id)
       .single();
 
-    // Add the 'admin' role to the redirect logic
-    if (profile?.role === "admin") {
+    if (profile?.role === "admin" || profile?.role === "superadmin") {
       redirect("/admin/dashboard");
-    } else if (profile?.role === "faculty") {
+    } else if (profile?.role === "faculty" || profile?.role === "hod") { // --- THIS IS THE FIX ---
       redirect("/faculty/dashboard");
     } else if (profile?.role === "student") {
       redirect("/student/dashboard");
     }
   }
+  
+  // If no user or no matching role, redirect to login
   redirect("/login");
 }
