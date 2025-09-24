@@ -28,14 +28,23 @@ export function AddActivityModal() {
 
   useEffect(() => {
     const supabase = createClient();
+
     const fetchCategories = async () => {
       const { data } = await supabase.from("activity_categories").select("*");
       if (data) setCategories(data);
     };
+
+    // --- THIS IS THE FIX ---
+    // Fetch both 'faculty' and 'hod' roles for the dropdown.
     const fetchFaculty = async () => {
-      const { data } = await supabase.from("profiles").select("id, full_name").eq("role", "faculty");
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .in("role", ["faculty", "hod"]); // Use .in() to get both roles
       if (data) setFaculty(data);
     };
+    // --- END OF FIX ---
+
     fetchCategories();
     fetchFaculty();
   }, []);
